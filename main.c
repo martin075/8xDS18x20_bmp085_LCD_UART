@@ -904,28 +904,28 @@ void display_temperatures( uint8_t num_sensors, uint8_t page)
 		//get temperature
 		d = bmp085_gettemperature();
 		dtostrf(d, 10, 2, printbuff);
-		uart_puts("temperature2: "); 
+		uart_puts("temperature: "); 
 		uart_puts(printbuff);  
 		uart_puts(" C deg"); 
 		uart_puts("\r\n");
 
 		//get pressure
 		l = bmp085_getpressure();
-		ltoa(l/100, printbuff, 10);
-		uart_puts("pressure: "); 
+		ltoa(l, printbuff, 10); 
+		uart_puts("pressure   :   "); 
 		uart_puts(printbuff);
-		uart_puts("hPa");
+		uart_puts(" Pa");
 		uart_puts("\r\n");
 		lcd_gotoxy( 17, 2);
-		//sprintf( printbuff1, "%3", printbuff/1000);
 		lcd_puts_P( "hPa");
 		lcd_gotoxy( 15, 2);
+		ltoa(l/100, printbuff, 10); // in hPa (/100)
 		lcd_puts( printbuff);
 
 		//get altitude
 		d = bmp085_getaltitude();
 		dtostrf(d, 10, 2, printbuff);
-		uart_puts("altitude: ");
+		uart_puts("altitude   : ");
 		uart_puts(printbuff);
 		uart_puts(" M above sea");
 		uart_puts("\r\n");
