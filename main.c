@@ -913,7 +913,7 @@ void display_temperatures( uint8_t num_sensors, uint8_t page)
 		//get pressure
 		l = bmp085_getpressure();
 		ltoa(l, printbuff, 10); 
-		uart_puts("abs.pressure:   "); 
+		uart_puts("rel.pressure:   "); 
 		uart_puts(printbuff);
 		uart_puts(" Pa");
 		uart_puts("\r\n");
