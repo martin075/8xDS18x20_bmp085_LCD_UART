@@ -32,7 +32,7 @@
 *                2017/03     added saving adresses into EEPROM 
 *				 2017/03 - upgraded libs UART.c, UART.h for avr-gcc 4.8.1 (Fleury 2015)
 *				 2017/03 - reading data from BMP085 - temp, altitude, pressure
-*                not mix 18b20 family and 1820/18s20
+*                do not mix 18b20 family and 1820/18s20
 *
 * Host Configuration ATMega16:
 *	PB0  LCD_DATA_4
@@ -256,10 +256,11 @@ int main( void)
 	bmp085_init();
 
 	// announce our birth
-	uart_puts_P( "DS1820 Logger v" MAJOR_VER "." MINOR_VER "\r");
+	uart_puts_P( "DS1820,BMP180 Logger v" MAJOR_VER "." MINOR_VER "\r");
 	lcd_gotoxy( 0, 0);
-	lcd_puts_P( "DS18x20 Logger v" MAJOR_VER);
-	
+	lcd_puts_P( "DS18x20 Logger v" MAJOR_VER "." MINOR_VER "\r");
+	//lcd_gotoxy( 0, 1);
+	lcd_puts_P( "   BMP180 Logger");
 	
 	delay_ms( 1000);	// pause lcd display for a moment
 
@@ -863,15 +864,15 @@ void display_temperatures( uint8_t num_sensors, uint8_t page)
 	//*pom1 = &gReadings[0];
 	//podmienka so zobrazenim sipky hore/dole/rovno -kod podla displeja C5hore/C6dole/C7rovno, pre vonkajsiu teplotu
 			if( ( ( pom1[0] ) < ( pom2[0]) ) && ((pom2[0]-pom1[0]) > HYSTER) )
-				{sprintf( gBuffer, "%02i#Out %+04i.%c\xC6\n",(int)page, gReadings[device] / 10,(gReadings[device] % 10) + '0');
+				{sprintf( gBuffer, "%i#Out %+04i.%c\xC6\n",(int)page, gReadings[device] / 10,(gReadings[device] % 10) + '0');
 				lcd_puts( gBuffer);
 				}
 			else if( ( ( pom1[0] ) > ( pom2[0]) ) && ((pom1[0]-pom2[0]) > HYSTER) )
-				{sprintf( gBuffer, "%02i#Out %+04i.%c\xC5\n",(int)page, gReadings[device] / 10,(gReadings[device] % 10) + '0');
+				{sprintf( gBuffer, "%i#Out %+04i.%c\xC5\n",(int)page, gReadings[device] / 10,(gReadings[device] % 10) + '0');
 				lcd_puts( gBuffer);
 				}
 			else
-			{sprintf( gBuffer, "%02i#Out %+04i.%c\xC7\n",(int)page, gReadings[device] / 10,(gReadings[device] % 10) + '0');
+			{sprintf( gBuffer, "%i#Out %+04i.%c\xC7\n",(int)page, gReadings[device] / 10,(gReadings[device] % 10) + '0');
 			lcd_puts( gBuffer);
 			}
 			pom2[0] = pom1[0];
@@ -882,17 +883,17 @@ void display_temperatures( uint8_t num_sensors, uint8_t page)
 		if( (page + 1) < num_sensors)
 		{
 				device = g1Wire_order[page + 1];
-				sprintf( gBuffer, "%02i#PmpW%+04i.%c\n",(int)page + 1, gReadings[device] / 10,(gReadings[device] % 10) + '0'); // pumpwell
+				sprintf( gBuffer, "%i#PmpW%+04i.%c\n",(int)page + 1, gReadings[device] / 10,(gReadings[device] % 10) + '0'); // pumpwell
 				lcd_puts( gBuffer);
 				if( (page + 2) < num_sensors)
 	      	 {
 	 	      	 device = g1Wire_order[page + 2];
-	 	       	sprintf( gBuffer, "%02i#Cllr%+04i.%c\n",(int)page + 2, gReadings[device] / 10,(gReadings[device] % 10) + '0'); //cellar
+	 	       	sprintf( gBuffer, "%i#Cllr%+04i.%c\n",(int)page + 2, gReadings[device] / 10,(gReadings[device] % 10) + '0'); //cellar
            	lcd_puts( gBuffer);
             if( (page + 3) < num_sensors)
 	        	   {
 	 	        	  device = g1Wire_order[page + 3];
-	 	          	sprintf( gBuffer, "%02i#Bler%+04i.%c\n",(int)page + 3, gReadings[device] / 10,(gReadings[device] % 10) + '0'); //boiler
+	 	          	sprintf( gBuffer, "%i#Bler%+04i.%c\n",(int)page + 3, gReadings[device] / 10,(gReadings[device] % 10) + '0'); //boiler
                	lcd_puts( gBuffer);
 	           		}
              	else lcd_puts_P( "            ");
@@ -912,14 +913,14 @@ void display_temperatures( uint8_t num_sensors, uint8_t page)
 		//get pressure
 		l = bmp085_getpressure();
 		ltoa(l, printbuff, 10); 
-		uart_puts("pressure   :   "); 
+		uart_puts("abs.pressure:   "); 
 		uart_puts(printbuff);
 		uart_puts(" Pa");
 		uart_puts("\r\n");
 		lcd_gotoxy( 17, 2);
 		lcd_puts_P( "hPa");
-		lcd_gotoxy( 15, 2);
-		ltoa(l/100, printbuff, 10); // in hPa (/100)
+		lcd_gotoxy( 13, 2);
+		ltoa((l/100) , printbuff, 10); // in hPa (/100) in relative pressure to sea level, bmp085.h
 		lcd_puts( printbuff);
 
 		//get altitude
@@ -929,8 +930,11 @@ void display_temperatures( uint8_t num_sensors, uint8_t page)
 		uart_puts(printbuff);
 		uart_puts(" M above sea");
 		uart_puts("\r\n");
-
-		uart_puts("\r\n");
+		//lcd_gotoxy( 19, 1);
+		//lcd_puts_P( "m");
+		//lcd_gotoxy( 15, 1);
+		//lcd_puts( printbuff);
+		//uart_puts("\r\n");
 		delay_ms(500);
 		}
 }

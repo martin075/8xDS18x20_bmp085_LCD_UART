@@ -6,8 +6,8 @@
 #ifndef _VERSION_H_
 #define _VERSION_H_
 
-#define MAJOR_VER "1.01"
-#define MINOR_VER "114"
+#define MAJOR_VER "1"
+#define MINOR_VER "21"
 #define BUILD "2017/03/18 15:21:27"
 #define MODFIED 0
 #define REV_RANGE "105:113"

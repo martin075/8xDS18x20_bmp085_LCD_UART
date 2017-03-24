@@ -54,8 +54,8 @@ Notes:
 
 //setup parameters
 #define BMP085_MODE BMP085_MODEULTRAHIGHRES //define a mode
-#define BMP085_UNITPAOFFSET 0 //define a unit offset (pa)
-#define BMP085_UNITMOFFSET 0 //define a unit offset (m)
+#define BMP085_UNITPAOFFSET 2600 //define a unit offset (pa)
+#define BMP085_UNITMOFFSET 0 //define a unit offset (m), according change of pressure - altitude is changing
 
 //avarage filter
 #define BMP085_FILTERPRESSURE 1 //avarage filter for pressure
